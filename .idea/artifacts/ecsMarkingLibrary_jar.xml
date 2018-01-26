@@ -1,0 +1,10 @@
+<component name="ArtifactManager">
+  <artifact name="ecsMarkingLibrary:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/ecsMarkingLibrary_jar</output-path>
+    <root id="root">
+      <element id="archive" name="ecsMarkingLibrary.jar">
+        <element id="module-output" name="ecsMarkingLibrary" />
+      </element>
+    </root>
+  </artifact>
+</component>
