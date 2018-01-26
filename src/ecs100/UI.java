@@ -1041,6 +1041,8 @@ public class UI {
      */
     public static int askInt(String question){
         prompt(question);
+        if(!inputs.isEmpty())
+            return (Integer)inputs.pollFirst();   //terahui
 	if (theUI.inputSource!=null){try {
 		int ans = theUI.inputSource.nextInt();
 		theUI.textPane.outputString(ans+"\n");
@@ -1049,8 +1051,6 @@ public class UI {
 	}
         while (true){
             try{
-                if(!inputs.isEmpty())
-                    return (Integer)inputs.pollFirst();   //terahui
                 int ans = theUI.textPane.nextInt();
                 return ans;
             }
@@ -1065,6 +1065,8 @@ public class UI {
      */
     public static double askDouble(String question){
         prompt(question);
+        if(!inputs.isEmpty())
+            return (Double) inputs.pollFirst();   //terahui
 	if (theUI.inputSource!=null){try {
 		double ans = theUI.inputSource.nextDouble();
 		theUI.textPane.outputString(ans+"\n");
@@ -1073,8 +1075,6 @@ public class UI {
 	}
         while (true){
             try{
-                if(!inputs.isEmpty())
-                    return (Double) inputs.pollFirst();   //terahui
                 return theUI.textPane.nextDouble();
             }
             catch (InputMismatchException e){}
@@ -1088,6 +1088,8 @@ public class UI {
      */
     public static boolean askBoolean(String question){
         prompt(question);
+        if(!inputs.isEmpty())
+            return (boolean) inputs.pollFirst();  //terahui
 	if (theUI.inputSource!=null){try {
 		boolean ans = theUI.inputSource.nextBoolean();
 		theUI.textPane.outputString(ans+"\n");
@@ -1096,8 +1098,6 @@ public class UI {
 	}
         while (true){
             try{
-                if(!inputs.isEmpty())
-                    return (boolean) inputs.pollFirst();  //terahui
                 return theUI.textPane.nextBoolean();
             }
             catch (InputMismatchException e){}
@@ -1106,18 +1106,20 @@ public class UI {
     }
 
     /**
-     * takes in a potential mix of int and double returning a list of double
+     * takes in a potential mix of int and double returning a list of double.
+     * This simulates the user entering the numbers as strings but rather than
+     * parsing the string as double the numbers are cast to double
      * @param nums
      * @return
      */
     public static ArrayList<Double> listForAskNumbers(List<Number> nums){
         return nums.stream()
-                .map(num -> {
-                    if(num instanceof Integer)
-                        return Double.valueOf((Integer) num);
-                    else
-                        return (Double) num;
-                }).collect(Collectors.toCollection(ArrayList::new));
+                   .map(num -> {
+                       if(num instanceof Integer)
+                           return Double.valueOf((Integer) num);
+                       else
+                           return (Double) num;
+                   }).collect(Collectors.toCollection(ArrayList::new));
     }
 
     /** Prints the question and waits for the user to enter a sequence of numbers,
@@ -1127,10 +1129,10 @@ public class UI {
      */
     public static ArrayList<Double> askNumbers(String question){
         prompt(question);
-	theUI.textPane.outputString("\n one per line\n end with 'done'\n" );
-	ArrayList<Double> ans = new ArrayList<Double>();
         if(!inputs.isEmpty() && inputs.peekFirst() instanceof ArrayList)
             return (ArrayList<Double>) inputs.pollFirst();
+	theUI.textPane.outputString("\n one per line\n end with 'done'\n" );
+	ArrayList<Double> ans = new ArrayList<Double>();
         while (true){
 	    String value = askToken(">");
 	    if ("done".equalsIgnoreCase(value))
