@@ -958,6 +958,11 @@ public class UI {
     /**
      * used for counting the number of occurrences of questions to the user made by the UI. e.g. askInt
      * and printing out the order of questions
+     * @param directory the sub-folder that the fileName is contained in
+     * @param fileName the file contained within the sub-folder
+     *
+     * if there is no sub-folder i.e. the project directory contains the file
+     * then the directory can be an empty string
      */
     public static int findQuestionsToUser(String directory, String fileName){
         String subFolder = "PowerCalculator";
