@@ -153,13 +153,11 @@ public class UI {
     public static void setDivider(double pos){
 	//System.out.println("Setting divider to "+pos);  //DEBUG
         checkInitialised();
-	sleep(100);
-        if (pos < 0){
+        sleep(100);
+        if (pos < 0)
             theUI.splitPane.setDividerLocation(DEFAULT_TEXTPANE_FRACTION);
-        }
-        else {
+        else
             theUI.splitPane.setDividerLocation(Math.min(1.0, pos));
-        }
     }
 
     /** Construct a new UI object, with its associated window.  <BR>
@@ -181,7 +179,7 @@ public class UI {
         frame.add(messageArea, BorderLayout.SOUTH);
 
         canvas = new Ecs100Canvas();
-	canvas.setFocusable(true);   // NEW JAN 2015
+        canvas.setFocusable(true);   // NEW JAN 2015
         textPane = new Ecs100TextArea(0,60);
         textPane.setFont(Font.decode("Monospaced"));
 
@@ -212,11 +210,14 @@ public class UI {
         // create thread to repaint every 20 milliseconds, if needed
         new Thread(() ->  {
 		while (canvas!=null){
-		    if (immediateRepaint){
-			canvas.redisplay();
-		    }
-		    try{Thread.sleep(20);}catch(InterruptedException e){}
-		}}).start();
+		    if (immediateRepaint)
+		        canvas.redisplay();
+		    try{Thread.sleep(20);
+		    }catch(InterruptedException ignored){
+		        //
+            }
+		}
+        }).start();
     }
  
     /*--- Menu Bar --------------------------------------------------------------*/
@@ -226,28 +227,19 @@ public class UI {
         JMenu menuItems = new JMenu("* MENU *");
 
         JMenuItem traceOnOff = new JMenuItem("Trace On/Off");
-        traceOnOff.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    Trace.setVisible(!Trace.isVisible());}});
+        traceOnOff.addActionListener(e -> Trace.setVisible(!Trace.isVisible()));
 
         JMenuItem clearPanes = new JMenuItem("Clear Panes");
-        clearPanes.addActionListener(new ActionListener() { 
-                public void actionPerformed(ActionEvent e) { 
-                    clearPanes();}});
+        clearPanes.addActionListener(e -> clearPanes());
 
         JMenuItem setInput = new JMenuItem("Set Input");
-        setInput.addActionListener(new ActionListener() { 
-                public void actionPerformed(ActionEvent e) {
-		    setInputSource();}});
+        setInput.addActionListener(e -> setInputSource());
 
         JMenuItem setOutput = new JMenuItem("Set Output");
-        setOutput.addActionListener(new ActionListener() { 
-                public void actionPerformed(ActionEvent e) {
-		    setOutputFile();}});
+        setOutput.addActionListener(e -> setOutputFile());
 
         JMenuItem quit = new JMenuItem("Quit");
-        quit.addActionListener(new ActionListener() { 
-                public void actionPerformed(ActionEvent e) { quit(); }});
+        quit.addActionListener(e -> quit());
 
         menuItems.add(traceOnOff);
         menuItems.add(clearPanes);
@@ -272,16 +264,17 @@ public class UI {
     }
 
     static void ensureText() {
-        if (theUI==null) checkInitialised();
+        if (theUI==null)
+            checkInitialised();
         //theUI.messageArea.setText("Split at :"+theUI.splitPane.getDividerLocation());
-        if (theUI.splitPane.getDividerLocation()<50){  // enough to make some text visible
+        if (theUI.splitPane.getDividerLocation()<50)  // enough to make some text visible
             theUI.splitPane.setDividerLocation(50);
-        }
     }
 
     /** Set the source for the ask and UI next methods. */
     private void setInputSource(){
-	if (inputSource!=null) {inputSource.close();}
+	if (inputSource!=null)
+	    inputSource.close();
 	String fn = null;
 	JFileChooser chooser = new JFileChooser();
 	int returnVal = chooser.showOpenDialog(frame);
@@ -764,12 +757,11 @@ public class UI {
      */
     public static void print(String s) {
         ensureText();
-	if (theUI.outputFile!=null){
-	    theUI.outputFile.print(s);
-	}
-        if (s == null) 
+        if (theUI.outputFile!=null)
+            theUI.outputFile.print(s);
+        if (s == null)
             theUI.textPane.outputString("NULL");
-        else 
+        else
             theUI.textPane.outputString(s);
     }
 
