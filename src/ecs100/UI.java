@@ -933,37 +933,22 @@ public class UI {
      * then the directory can be an empty string
      */
     public static int findQuestionsToUser(String directory, String fileName){
-        String subFolder = "PowerCalculator";
-        //String fileName = "PowerCalculator.java";
-
         String pathToSelectedFile = new File("").getAbsolutePath() +
                 "\\" + directory +
                 "\\" + fileName;
-                //UIFileChooser.open("Choose a file");
-        //UI.println("Printing contents of "+ pathToSelectedFile);
-
-        String currentDirectory;
-        File file = new File(".");
-        currentDirectory = file.getAbsolutePath();
         System.out.println("Current working directory : " + pathToSelectedFile);
         try {
-            //System.out.println(new File(".").getCanonicalPath());
-            /*String filePath = new File(".")
-                    .getCanonicalPath() + "\\" +
-                              subFolder + "\\" +
-                              fileName;*/
-            //find questions to the user
             String[]questions = Files.lines(Paths.get(pathToSelectedFile))
                                      .filter(line -> line.contains("UI.ask"))
                                      .map(UI::questionTypeWithContext)
                                      .toArray(String[]::new);
 
             int occurrencesOfStringInFile = Files.lines(Paths.get(pathToSelectedFile))
-                                   .filter(line -> line.contains("Ask"))
-                                   .map(line -> line.split("Ask",-1))
-                                   .map(matches -> matches.length - 1)
-                                   .mapToInt(Integer::intValue)
-                                   .sum();
+                                                 .filter(line -> line.contains("Ask"))
+                                                 .map(line -> line.split("Ask",-1))
+                                                 .map(matches -> matches.length - 1)
+                                                 .mapToInt(Integer::intValue)
+                                                 .sum();
 
             //printToConsole("num of \"Ask\" = " + occurrencesOfStringInFile);
             for (int i = 0; i < questions.length; i++)
@@ -996,12 +981,12 @@ public class UI {
         return "Question type not Found for " + questionLine;
     }
 
-    private static String context(String questionLine) {
+    private static String questionContext(String questionLine) {
         return questionLine.split("[()]")[1];
     }
 
     private static String questionTypeFormatted(String question, String questionLine){
-        return question + " " + context(questionLine) + " | actual line ->" + questionLine;
+        return question + " " + questionContext(questionLine) + " | actual line ->" + questionLine;
     }
 
     private static void printToConsole(String toPrint){
