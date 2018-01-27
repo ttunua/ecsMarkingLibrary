@@ -1,40 +1,16 @@
 package ecs100;
 
 // Version with lambdas!!!//
-
-import javax.swing.*;
-
-import java.awt.event.WindowAdapter;
-import java.awt.event.ActionListener;
-import java.awt.Container;
-import java.awt.Component;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Image;
-import java.awt.Graphics2D;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.Rectangle2D;
-import java.awt.geom.Line2D;
-import java.awt.geom.Arc2D;
-import java.awt.Dimension;
-import java.awt.Polygon;
-import java.awt.event.ActionEvent;
-import java.awt.event.WindowEvent;
-
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.awt.*;
+import java.awt.geom.*;
+import java.awt.event.*;
+import java.io.*;
+import java.nio.file.*;
 import java.util.*;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.util.stream.Collectors;
+import java.util.List;
+import java.util.concurrent.*;
+import java.util.stream.*;
+import javax.swing.*;
 
 /** The UI class provides a simple, flexible Graphical User Interface suitable 
  * for small programs.  The UI class will construct a window which can contain 
