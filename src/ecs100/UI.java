@@ -928,38 +928,38 @@ public class UI {
      * and printing out the order of questions
      * @param directory the sub-folder that the fileName is contained in
      * @param fileName the file contained within the sub-folder
-     *
+     * @param stringToFind the string to find in the file
      * if there is no sub-folder i.e. the project directory contains the file
      * then the directory can be an empty string
      */
-    public static int findQuestionsToUser(String directory, String fileName){
+    public static String[] LinesOfStringOccurrencesInFile(
+            String directory,
+            String fileName,
+            String stringToFind)
+    {
         String pathToSelectedFile = new File("").getAbsolutePath() +
                 "\\" + directory +
                 "\\" + fileName;
         System.out.println("Current working directory : " + pathToSelectedFile);
         try {
-            String[]questions = Files.lines(Paths.get(pathToSelectedFile))
-                                     .filter(line -> line.contains("UI.ask"))
-                                     .map(UI::questionTypeWithContext)
-                                     .toArray(String[]::new);
-
             int occurrencesOfStringInFile = Files.lines(Paths.get(pathToSelectedFile))
                                                  .filter(line -> line.contains("Ask"))
                                                  .map(line -> line.split("Ask",-1))
                                                  .map(matches -> matches.length - 1)
                                                  .mapToInt(Integer::intValue)
                                                  .sum();
-
             //printToConsole("num of \"Ask\" = " + occurrencesOfStringInFile);
-            for (int i = 0; i < questions.length; i++)
-                printToConsole("q" + (i+1) + ": " + questions[i]);
+            /*for (int i = 0; i < questions.length; i++)
+                printToConsole("q" + (i+1) + ": " + questions[i]);*/
 
-            System.out.println(questions.length + " questions to the user");
-            return questions.length;
+            //System.out.println(questions.length + " questions to the user");
+            return Files.lines(Paths.get(pathToSelectedFile))
+                        .filter(line -> line.contains(stringToFind))
+                        .toArray(String[]::new);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return -1;
+        return new String[]{"no occurrences found"};
     }
 
     private static String questionTypeWithContext(String questionLine){
