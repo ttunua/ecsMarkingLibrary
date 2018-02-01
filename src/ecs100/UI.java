@@ -926,19 +926,19 @@ public class UI {
     /**
      * used for counting the number of occurrences of questions to the user made by the UI. e.g. askInt
      * and printing out the order of questions
-     * @param directory the sub-folder that the fileName is contained in
+     * @param subDirectory the sub-folder that the fileName is contained in
      * @param fileName the file contained within the sub-folder
-     * @param stringToFind the string to find in the file
+     * @param toFind the string to find in the file
      * if there is no sub-folder i.e. the project directory contains the file
      * then the directory can be an empty string
      */
     public static String[] LinesOfStringOccurrencesInFile(
-            String directory,
+            String subDirectory,
             String fileName,
-            String stringToFind)
+            String toFind)
     {
         String pathToSelectedFile = new File("").getAbsolutePath() +
-                "\\" + directory +
+                "\\" + subDirectory +
                 "\\" + fileName;
         System.out.println("Current working directory : " + pathToSelectedFile);
         try {
@@ -954,7 +954,7 @@ public class UI {
 
             //System.out.println(questions.length + " questions to the user");
             return Files.lines(Paths.get(pathToSelectedFile))
-                        .filter(line -> line.contains(stringToFind))
+                        .filter(line -> line.contains(toFind))
                         .toArray(String[]::new);
         } catch (IOException e) {
             e.printStackTrace();
@@ -1104,6 +1104,12 @@ public class UI {
         }
     }
 
+    /**
+     * takes in a list of strings and returns an arrayList of strings.
+     * The intent is to create a list to be added to the inputs list for use in marking
+     * @param strings
+     * @return
+     */
     public static ArrayList<String> listForAskStrings(List<String> strings){
         return new ArrayList<>(strings);
     }
