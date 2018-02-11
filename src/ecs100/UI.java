@@ -111,8 +111,7 @@ public class UI {
      */
     private void recreateFrame(int width, int height){
         checkInitialised();
-	dispose();
-	    
+        dispose();
         frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setJMenuBar(menuBar);

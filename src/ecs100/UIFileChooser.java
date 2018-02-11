@@ -16,7 +16,7 @@ public class UIFileChooser implements Runnable {
     private UIFileChooser(){
     }
     
-    private static String toReturn;
+    private static String filePath;
     private static String chooserTitle = null;
     private static boolean saving = false;
     
@@ -33,22 +33,22 @@ public class UIFileChooser implements Runnable {
     		returnVal =  chooser.showOpenDialog(null);   // was (UI.getFrame()) mac problems?
     	}
 		if (returnVal == JFileChooser.APPROVE_OPTION) 
-		    toReturn = chooser.getSelectedFile().getPath();
+		    filePath = chooser.getSelectedFile().getPath();
 		else
-		    toReturn = null;
+		    filePath = null;
 	}
 
     /** Opens a file chooser dialog box to allow the user to select an existing file to open.
-	Returns a string that is the name of the file, or null if the user cancelled. */
+	Returns a string that is the path to the file, or null if the user cancelled. */
     public static String open(){
-    	toReturn = "nothing";
+    	filePath = "nothing";
     	saving = false;
     	try {
 			SwingUtilities.invokeAndWait(new UIFileChooser());
 		} catch (InvocationTargetException | InterruptedException e) {
 			// Do nothing
 		}
-    	return toReturn;
+    	return filePath;
     }
     
 
@@ -56,7 +56,7 @@ public class UIFileChooser implements Runnable {
 	Allows the user to select an existing file to open.
 	Returns a string that is the name of the file, or null if the user cancelled. */
     public static String open(String title){
-    	toReturn = "nothing";
+    	filePath = "nothing";
     	saving = false;
     	chooserTitle = title;
     	try {
@@ -65,27 +65,27 @@ public class UIFileChooser implements Runnable {
 			// Do nothing
 		}
     	chooserTitle = null;
-    	return toReturn;
+    	return filePath;
     }
 
     /** Opens a file chooser dialog box to allow the user to select a file (possibly new) to save to.
 	Returns a string that is the name of the file, or null if the user cancelled. */
     public static String save(){
-    	toReturn = "nothing";
+    	filePath = "nothing";
     	saving = true;
     	try {
 			SwingUtilities.invokeAndWait(new UIFileChooser());
 		} catch (InvocationTargetException | InterruptedException e) {
 			// Do nothing
 		}
-    	return toReturn;
+    	return filePath;
     }
 
     /** Opens a file chooser dialog box with a specified title.
 	Allows the user to select a file (possibly new) to save to.
 	Returns a string that is the name of the file, or null if the user cancelled. */
     public static String save(String title){
-    	toReturn = "nothing";
+    	filePath = "nothing";
     	saving = true;
     	chooserTitle = title;
     	try {
@@ -94,7 +94,7 @@ public class UIFileChooser implements Runnable {
 			// Do nothing
 		}
     	chooserTitle = null;
-    	return toReturn;
+    	return filePath;
     }
 
 
