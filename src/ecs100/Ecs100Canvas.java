@@ -29,7 +29,7 @@ import java.awt.event.MouseEvent;
 //  JComponent doesn't get the focus
 //  JPanel doesn't get the focus
 
-class Ecs100Canvas extends JComponent { //
+public class Ecs100Canvas extends JComponent { //
     private Image imgBuf;
     private Graphics2D imgGraphic, visibleGraphic;
 

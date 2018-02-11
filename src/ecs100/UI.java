@@ -32,7 +32,7 @@ The user can also input positions using the mouse in this region.
 public class UI {
     private JFrame frame;
     private JMenuBar menuBar;
-    private JPanel inputPanel;
+    public JPanel inputPanel;
     private JSplitPane splitPane; 
     //    private Box IOarea;
     public Ecs100Canvas canvas;   //    private DEBUG
@@ -942,6 +942,7 @@ public class UI {
                 "\\" + fileName;
         System.out.println("Current working directory : " + pathToSelectedFile);
         try {
+            //finds the total number of occurrences of a string even on the same line
             int occurrencesOfStringInFile = Files.lines(Paths.get(pathToSelectedFile))
                                                  .filter(line -> line.contains("Ask"))
                                                  .map(line -> line.split("Ask",-1))
