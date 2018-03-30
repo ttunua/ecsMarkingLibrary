@@ -40,6 +40,7 @@ public class UI {
     private JTextArea messageArea;
     private Ecs100MouseListener ml = null;
     private Ecs100KeyListener kl = null;
+    
 
     private Scanner inputSource; // input source for automated testing.
     private PrintStream outputFile; // output file for automated testing.
