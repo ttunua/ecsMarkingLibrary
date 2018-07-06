@@ -9,6 +9,8 @@ import java.nio.file.*;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.*;
+import java.util.function.BinaryOperator;
+import java.util.function.Predicate;
 import java.util.stream.*;
 import javax.swing.*;
 
@@ -40,7 +42,7 @@ public class UI {
     private JTextArea messageArea;
     private Ecs100MouseListener ml = null;
     private Ecs100KeyListener kl = null;
-    
+
 
     private Scanner inputSource; // input source for automated testing.
     private PrintStream outputFile; // output file for automated testing.
@@ -901,7 +903,7 @@ public class UI {
     public static String askString(String question){
         prompt(question);
         if(!inputs.isEmpty())
-            return (String)inputs.pollFirst();   //terahui
+            return (String) inputs.pollFirst();   //terahui
 	if (theUI.inputSource!=null){try {
 		String ans = theUI.inputSource.nextLine();
 		theUI.textPane.outputString(ans+"\n");
@@ -919,7 +921,8 @@ public class UI {
      * @param inputsList the list of objects for user input
      */
     public static java.util.ArrayDeque<Object> inputs = new ArrayDeque<>();  //the que of inputs //terahui
-    public static void fillInputSequence(List<Object> inputsList) {
+    public static void fillInputSequence(List<Object> inputsList)
+    {
         inputsList.forEach(input -> inputs.addLast(input));
     }
 
@@ -932,7 +935,7 @@ public class UI {
      * if there is no sub-folder i.e. the project directory contains the file
      * then the directory can be an empty string
      */
-    public static String[] LinesOfStringOccurrencesInFile(
+    public static String[] linesContaining(
             String subDirectory,
             String fileName,
             String toFind)
@@ -940,7 +943,9 @@ public class UI {
         String pathToSelectedFile = new File("").getAbsolutePath() +
                 "\\" + subDirectory +
                 "\\" + fileName;
+
         System.out.println("Current working directory : " + pathToSelectedFile);
+
         try {
             //finds the total number of occurrences of a string even on the same line
             int occurrencesOfStringInFile = Files.lines(Paths.get(pathToSelectedFile))
@@ -954,43 +959,112 @@ public class UI {
                 printToConsole("q" + (i+1) + ": " + questions[i]);*/
 
             //System.out.println(questions.length + " questions to the user");
-            return Files.lines(Paths.get(pathToSelectedFile))
-                        .filter(line -> line.contains(toFind))
+            Predicate<String> validQuestion = line ->
+                    !line.startsWith("/*") &&
+                    !line.startsWith("//") &&
+                     line.contains(toFind);
+            final int[] count = {0};
+            var x = Files.lines(Paths.get(pathToSelectedFile))
+                        .peek(line -> count[0]++)
+                        .map(String::trim)
+                        .filter(validQuestion)
+                        .map(UI::formatQuestion)
+                        .map(line -> "line: " + count[0] + " | " + line)
                         .toArray(String[]::new);
+
+            return x;
         } catch (IOException e) {
             e.printStackTrace();
+            return new String[]{"no occurrences found"};
         }
-        return new String[]{"no occurrences found"};
     }
 
-    private static String questionTypeWithContext(String questionLine){
+    public static Map<Integer,String> lineNumberToLineFor(
+            String toFind,
+            String subDirectory,
+            String fileName)
+    {
+        String pathToSelectedFile = new File("").getAbsolutePath() +
+                "\\" + subDirectory +
+                "\\" + fileName;
+
+        System.out.println("Current working directory : " + pathToSelectedFile);
+
+        try {
+            //finds the total number of occurrences of a string even on the same line
+            int occurrencesOfStringInFile = Files.lines(Paths.get(pathToSelectedFile))
+                    .filter(line -> line.contains("Ask"))
+                    .map(line -> line.split("Ask", -1))
+                    .map(matches -> matches.length - 1)
+                    .mapToInt(Integer::intValue)
+                    .sum(); //not used
+
+            Predicate<String> validQuestion = line -> !line.startsWith("/*") &&
+                                                      !line.startsWith("//") &&
+                                                       line.contains(toFind);
+
+            BinaryOperator<String> mergeFunction = (v1,v2) -> {
+                throw new RuntimeException(
+                        String.format("Duplicate key for values %s and %s", v1, v2)
+                );
+            };
+
+            final int[] lineNumber = {0};    //single element array for local counter
+            return Files.lines(Paths.get(pathToSelectedFile))
+                        .peek(line -> lineNumber[0]++) //increment the line number to start at 1
+                        .map(String::trim)
+                        .filter(validQuestion)
+                        .map(UI::formatQuestion)
+                        .collect(Collectors.toMap(
+                                line -> lineNumber[0],
+                                line -> line,
+                                mergeFunction,
+                                TreeMap::new)
+                        );
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return Collections.emptyMap();
+        }
+    }
+
+    private static String formatQuestion(String question)
+    {
         //could just concat the questionLine onto the end instead of filtering out the context
-        if(questionLine.contains("UI.askInt"))
-            return questionTypeFormatted("askInt", questionLine);
-        else if(questionLine.contains("UI.askDouble"))
-            return questionTypeFormatted("askDouble", questionLine);
-        else if(questionLine.contains("UI.askNumbers"))
-            return questionTypeFormatted("askNumbers", questionLine);
-        else if(questionLine.contains("UI.askStrings"))
-            return questionTypeFormatted("askStrings", questionLine);
-        else if(questionLine.contains("UI.askBoolean"))
-            return questionTypeFormatted("askBoolean", questionLine);
-        else if(questionLine.contains("UI.askString"))
-            return questionTypeFormatted("askString", questionLine);
-        else if(questionLine.contains("UI.askToken"))
-            return questionTypeFormatted("askToken", questionLine);
-        return "Question type not Found for " + questionLine;
+
+        if(question.contains("UI.askInt"))
+            return formatAs("askInt", question);
+        else if(question.contains("UI.askDouble"))
+            return formatAs("askDouble", question);
+        else if(question.contains("UI.askNumbers"))
+            return formatAs("askNumbers", question);
+        else if(question.contains("UI.askStrings"))
+            return formatAs("askStrings", question);
+        else if(question.contains("UI.askBoolean"))
+            return formatAs("askBoolean", question);
+        else if(question.contains("UI.askString"))
+            return formatAs("askString", question);
+        else if(question.contains("UI.askToken"))
+            return formatAs("askToken", question);
+        return "Question type not Found for " + question;
     }
 
-    private static String questionContext(String questionLine) {
+    private static String questionContext(String questionLine)
+    {
         return questionLine.split("[()]")[1];
     }
 
-    private static String questionTypeFormatted(String question, String questionLine){
-        return question + " " + questionContext(questionLine) + " | actual line ->" + questionLine;
+    private static String formatAs(
+            String questionType,
+            String questionLine)
+    {
+        return questionType + " " +
+               questionContext(questionLine) +
+               "     |   actual line -> " + questionLine;
     }
 
-    private static void printToConsole(String toPrint){
+    private static void printToConsole(String toPrint)
+    {
         System.out.println(toPrint);
     }
 
@@ -1001,7 +1075,7 @@ public class UI {
     public static int askInt(String question){
         prompt(question);
         if(!inputs.isEmpty())
-            return (Integer)inputs.pollFirst();   //terahui
+            return (int)inputs.pollFirst();   //terahui
 	if (theUI.inputSource!=null){try {
 		int ans = theUI.inputSource.nextInt();
 		theUI.textPane.outputString(ans+"\n");
@@ -1025,7 +1099,7 @@ public class UI {
     public static double askDouble(String question){
         prompt(question);
         if(!inputs.isEmpty())
-            return (Double) inputs.pollFirst();   //terahui
+            return (double) inputs.pollFirst();   //terahui
 	if (theUI.inputSource!=null){try {
 		double ans = theUI.inputSource.nextDouble();
 		theUI.textPane.outputString(ans+"\n");
@@ -1068,25 +1142,37 @@ public class UI {
      * takes in a potential mix of int and double returning a list of double.
      * This simulates the user entering the numbers as strings but rather than
      * parsing the string as double the numbers are cast to double
-     * @param nums
+     * @param numbers
      * @return
      */
-    public static ArrayList<Double> listForAskNumbers(List<Number> nums){
-        return nums.stream()
-                   .map(num -> {
-                       if(num instanceof Integer)
-                           return Double.valueOf((Integer) num);
+    public static ArrayList<Double> listForAskNumbers(List<Number> numbers)
+    {
+        return numbers.stream()
+                   .map(number -> {
+                       if(number instanceof Integer)
+                           return (double) (int) number;
                        else
-                           return (Double) num;
+                           return (double) number;
                    }).collect(Collectors.toCollection(ArrayList::new));
     }
+
+
+
+     static<Type>  boolean a_InstanceOf_b(
+             Object object_a,
+             Class<Type> typeOf_b)
+     {
+         return typeOf_b.isInstance(object_a);
+     }
+
 
     /** Prints the question and waits for the user to enter a sequence of numbers,
 	ending with 'done'
         Returns their answer as an ArrayList<Double>.
         Removes any pending user input before asking the question.
      */
-    public static ArrayList<Double> askNumbers(String question){
+    public static ArrayList<Double> askNumbers(String question)
+    {
         prompt(question);
         if(!inputs.isEmpty() && inputs.peekFirst() instanceof ArrayList)
             return (ArrayList<Double>) inputs.pollFirst();
