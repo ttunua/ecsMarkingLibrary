@@ -963,6 +963,7 @@ public class UI {
                     !line.startsWith("/*") &&
                     !line.startsWith("//") &&
                      line.contains(toFind);
+
             final int[] count = {0};
             var x = Files.lines(Paths.get(pathToSelectedFile))
                         .peek(line -> count[0]++)
@@ -1032,21 +1033,14 @@ public class UI {
     {
         //could just concat the questionLine onto the end instead of filtering out the context
 
-        if(question.contains("UI.askInt"))
-            return formatAs("askInt", question);
-        else if(question.contains("UI.askDouble"))
-            return formatAs("askDouble", question);
-        else if(question.contains("UI.askNumbers"))
-            return formatAs("askNumbers", question);
-        else if(question.contains("UI.askStrings"))
-            return formatAs("askStrings", question);
-        else if(question.contains("UI.askBoolean"))
-            return formatAs("askBoolean", question);
-        else if(question.contains("UI.askString"))
-            return formatAs("askString", question);
-        else if(question.contains("UI.askToken"))
-            return formatAs("askToken", question);
-        return "Question type not Found for " + question;
+        return question.contains("UI.askInt")     ? formatAs("askInt", question) :
+               question.contains("UI.askDouble")  ? formatAs("askDouble", question) :
+               question.contains("UI.askNumbers") ? formatAs("askNumbers", question) :
+               question.contains("UI.askStrings") ? formatAs("askStrings", question) :
+               question.contains("UI.askBoolean") ? formatAs("askBoolean", question) :
+               question.contains("UI.askString")  ? formatAs("askStrings", question) :
+               question.contains("UI.askToken")   ? formatAs("askToken", question) :
+                                                    "Question type not Found for " + question;
     }
 
     private static String questionContext(String questionLine)
