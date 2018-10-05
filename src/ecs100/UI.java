@@ -10,6 +10,8 @@ import java.util.*;
 import java.util.List;
 import java.util.concurrent.*;
 import java.util.function.BinaryOperator;
+import java.util.function.DoubleFunction;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.*;
 import javax.swing.*;
@@ -1141,13 +1143,12 @@ public class UI {
      */
     public static ArrayList<Double> listForAskNumbers(List<Number> numbers)
     {
+        final Function<Number, Double> toDouble =
+                number -> number instanceof Integer ? (double) (int) number : (double) number;
+
         return numbers.stream()
-                   .map(number -> {
-                       if(number instanceof Integer)
-                           return (double) (int) number;
-                       else
-                           return (double) number;
-                   }).collect(Collectors.toCollection(ArrayList::new));
+                      .map(toDouble)
+                      .collect(Collectors.toCollection(ArrayList::new));
     }
 
 
